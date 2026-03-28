@@ -1,0 +1,80 @@
+[project]
+name = "oct25-bde-holiday-itinerary"
+version = "0.1.0"
+description = "Simple tool to plan holiday routes in france."
+requires-python = ">=3.13"
+authors = [
+    { name = "Adam Stibal", email = "adam.stibal@google.com" },
+    { name = "Max Düssler", email = "max.duessler@posteo.net" },
+]
+readme = "README.md"
+
+[tool.poetry]
+packages = [
+    { include = "backend", from = "src" },
+    { include = "frontend", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.13.0 <3.14"
+loguru = "0.7.3"
+beautifulsoup4 = "4.14.3"
+aiohttp = "3.13.3"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "4.2.0"
+black = "25.11.0"
+isort = "7.0.0"
+flake8 = "7.3.0"
+mypy = "1.18.2"
+pytest = "9.0.1"
+requests = "2.32.5"
+matplotlib = "3.10.8"
+basemap = "2.0.0"
+
+[tool.poetry.group.neo4j_driver.dependencies]
+neo4j = "6.0.3"
+numpy = "2.3.5"
+python-tsp = "0.5.0"
+
+[tool.poetry.group.neo4j_api.dependencies]
+uvicorn = "0.38.0"
+fastapi = { version = "0.122.0", extras = ["standard"] }
+pandas = "2.3.3"
+tqdm = "4.67.1"
+
+[tool.poetry.group.make_dataset.dependencies]
+pandas = "2.3.3"
+
+[tool.poetry.group.ui.dependencies]
+streamlit = "1.52.2"
+requests = "2.32.5"
+pandas = "2.3.3"
+pydeck = "0.9.1"
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+known_first_party = "poetry"
+
+[tool.black]
+line_length = 120
+
+[tool.flake8]
+max-line-length = 120
+max-doc-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v -q -ra --color=yes"
+log_cli = false
+log_cli_level = "WARNING"
+log_level = "DEBUG"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project.scripts]
+transform-datatourisme = "scripts.transform_datatourisme:main"
