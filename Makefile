@@ -7,6 +7,8 @@ dev-file=docker-compose.dev.yaml
 init: run make-dataset
 
 run:
+	@echo "Installing poetry..."
+	poetry install
 	@echo "Running data transformation..."
 	poetry run transform-datatourisme || exit 1
 	@echo "Starting Docker containers..."

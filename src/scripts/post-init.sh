@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-export $(grep -v '^#' .env | xargs)
+# export $(grep -v '^#' .env | xargs)
 
 NEO4J_USER="neo4j"
 NEO4J_PASS="${NEO4J_PASSWORD}"

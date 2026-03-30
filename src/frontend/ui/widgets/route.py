@@ -67,7 +67,7 @@ class Route:
                         if st.session_state.get("start_city") in start_options
                         else None
                     ),
-                    placeholder="Select start POI",
+                    placeholder="Select start city",
                 )
 
             with end:
@@ -80,7 +80,7 @@ class Route:
                         if st.session_state.get("dest_city") in end_options
                         else None
                     ),
-                    placeholder="Select end POI",
+                    placeholder="Select end city",
                 )
 
     def generate_nodes(self, key_to_exclude) -> list[str]:

@@ -2,11 +2,13 @@
 
 set -euo pipefail
 
-export $(grep -v '^#' .env | xargs)
+set -a
+# source .env
+set +a
 
 NEO4J_USER="neo4j"
 NEO4J_PASS="${NEO4J_PASSWORD}"
-IMPORT_VERSION="initial"
+GRAPH_NAME="city-road-graph"
 
 echo "Waiting for Neo4j to accept connections..."
 
@@ -18,41 +20,26 @@ done
 
 echo "Neo4j is ready."
 
-execute_cypher() {
-    STEP_NAME="$1"
-    CYPHER="$2"
+echo "Checking if graph '${GRAPH_NAME}' exists..."
 
-    APPLIED=$(
-        cypher-shell -u "${NEO4J_USER}" -p "${NEO4J_PASS}" --format plain <<EOF
-            MATCH (m:_Migration {name: "${STEP_NAME}"})
-            RETURN count(m);
+GRAPH_EXISTS=$(
+cypher-shell -u "${NEO4J_USER}" -p "${NEO4J_PASS}" --format plain <<EOF
+CALL gds.graph.exists('${GRAPH_NAME}') YIELD exists RETURN exists;
 EOF
-    )
+)
 
-    APPLIED=$(echo "$APPLIED" | tail -n 1 | tr -d '[:space:]')
+GRAPH_EXISTS=$(echo "$GRAPH_EXISTS" | tail -n 1 | tr -d '[:space:]')
 
-    if [ "${APPLIED}" != "0" ]; then
-        echo "Step '${STEP_NAME}' already applied. Skipping."
-        return
-    fi
+if [ "$GRAPH_EXISTS" = "true" ]; then
+    echo "Graph '${GRAPH_NAME}' already exists. Skipping creation."
+    exit 0
+fi
 
-    echo "Creating '${STEP_NAME}'..."
+echo "Creating graph '${GRAPH_NAME}'..."
 
-    cypher-shell -u "${NEO4J_USER}" -p "${NEO4J_PASS}" <<EOF
-$CYPHER
-CREATE (:_Migration {
-    name: "${STEP_NAME}",
-    version: "${IMPORT_VERSION}",
-    appliedAt: datetime()
-});
-EOF
-
-    echo "Step '${STEP_NAME}' completed."
-}
-
-execute_cypher "city-road-graph" "
+cypher-shell -u "${NEO4J_USER}" -p "${NEO4J_PASS}" <<EOF
 CALL gds.graph.project(
-    'city-road-graph',
+    '${GRAPH_NAME}',
     'City',
     {
         ROAD_TO: {
@@ -62,6 +49,8 @@ CALL gds.graph.project(
         }
     }
 );
-"
+EOF
 
-echo "All post-import steps complete."
+echo "Graph '${GRAPH_NAME}' created successfully."
+
+echo "Post-init completed."
