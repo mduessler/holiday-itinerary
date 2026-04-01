@@ -14,6 +14,10 @@ By combining tourism datasets with a simulated road network, the system enables
 intelligent route planning and structured itinerary generation for travelers exploring
 France.
 
+![Holiday Itinerary](images/ItineraryOneWayExample.png)
+
+**Quickstart**: `make run`
+
 ## Motivation
 
 The idea behind this project originated from a common interest in applying modern
